@@ -18,22 +18,18 @@ class CitiesLocalDataSource {
     final key = AppConstants.getCitiesCacheKey(query, page);
     _citiesBox.put(key, {
       'cities': cities.map((city) => city.toJson()).toList(),
-      'timestamp': DateTime.now().toIso8601String(),
     });
 
     if (query.isNotEmpty) {
       final historyJson = _searchHistoryBox.get(query);
       if (historyJson != null) {
         final history = SearchHistoryModel.fromJson(historyJson);
-        final updatedCachedPages = {...history.cachedPages};
-        updatedCachedPages[page] = cities;
 
         _searchHistoryBox.put(
           query,
           history
               .copyWith(
                 timestamp: DateTime.now(),
-                cachedPages: updatedCachedPages,
               )
               .toJson(),
         );
@@ -43,7 +39,6 @@ class CitiesLocalDataSource {
           SearchHistoryModel(
             query: query,
             timestamp: DateTime.now(),
-            cachedPages: {page: cities},
           ).toJson(),
         );
       }
